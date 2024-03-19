@@ -1,8 +1,8 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { UserController } from "../controllers/user/UserController";
 
 export const userRouter = express.Router();
 userRouter.use(express.json());
+const userController = new UserController();
 
-userRouter.get("/", async (req: Request, res: Response) => {
-  res.status(200).json({ message: "Usuários resgatados com sucesso." });
-});
+userRouter.post("/register", userController.signUp.bind(userController));
