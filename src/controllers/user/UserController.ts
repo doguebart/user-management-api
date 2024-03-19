@@ -4,6 +4,8 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import { UserRepository } from "../../repositories/user/UserRepository";
 
+const ROLE = process.env.USER_ROLE;
+
 export class UserController {
   private userRepository: UserRepository;
 
@@ -12,7 +14,13 @@ export class UserController {
   }
 
   async signUp(req: Request, res: Response) {
-    const { firstName, lastName, phone, email, password } = req.body;
+    const { role, firstName, lastName, phone, email, password } = req.body;
+
+    if (role && role !== ROLE) {
+      return res
+        .status(401)
+        .json({ message: "Não foi possível prosseguir com essa operação." });
+    }
 
     if (!firstName || !lastName || !phone || !email || !password) {
       return res
@@ -70,6 +78,7 @@ export class UserController {
 
     try {
       const user = await this.userRepository.createUser({
+        role,
         firstName,
         lastName,
         phone,
@@ -83,7 +92,7 @@ export class UserController {
         });
       }
 
-      createToken(user.id, res);
+      createToken(user.id, user.role, res);
 
       return res.status(201).json({
         message: "Usuário criado com sucesso.",
@@ -187,6 +196,26 @@ export class UserController {
       console.log(error);
       res.status(500).json({
         message: "Algo de errado aconteceu, tente novamente mais tarde.",
+      });
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "O id do usuário não foi fornecido." });
+    }
+
+    try {
+      await this.userRepository.deleteUser(id);
+
+      return res.status(200).json({ message: "Usuário apagado com sucesso." });
+    } catch (error) {
+      return res.status(500).json({
+        mesasge: "Algo de errado aconteceu, tente novamente mais tarde.",
       });
     }
   }
