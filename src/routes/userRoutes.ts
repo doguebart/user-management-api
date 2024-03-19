@@ -7,3 +7,4 @@ const userController = new UserController();
 
 userRouter.post("/register", userController.signUp.bind(userController));
 userRouter.get("/", userController.getUsers.bind(userController));
+userRouter.patch("/:id", userController.update.bind(userController));

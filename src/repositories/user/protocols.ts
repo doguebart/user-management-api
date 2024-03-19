@@ -15,6 +15,4 @@ export interface ICreateUserParams {
 export interface IUpdateUserParams {
   firstName?: string;
   lastName?: string;
-  phone?: string;
-  email?: string;
 }

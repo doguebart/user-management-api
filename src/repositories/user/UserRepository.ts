@@ -1,5 +1,5 @@
 import { prisma } from "../../database/db";
-import { ICheckUser, ICreateUserParams } from "./protocols";
+import { ICheckUser, ICreateUserParams, IUpdateUserParams } from "./protocols";
 
 export class UserRepository {
   async checkUserByEmail(params: ICheckUser) {
@@ -30,6 +30,20 @@ export class UserRepository {
         lastName: true,
         phone: true,
         email: true,
+      },
+    });
+  }
+
+  async updateUser(id: string, params: IUpdateUserParams) {
+    return await prisma.user.update({
+      where: { id },
+      data: {
+        firstName: params.firstName,
+        lastName: params.lastName,
+      },
+      select: {
+        firstName: true,
+        lastName: true,
       },
     });
   }
