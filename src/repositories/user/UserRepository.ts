@@ -31,6 +31,7 @@ export class UserRepository {
     return await prisma.user.findMany({
       select: {
         id: true,
+        role: true,
         firstName: true,
         lastName: true,
         phone: true,
@@ -44,6 +45,7 @@ export class UserRepository {
       where: { id },
       select: {
         id: true,
+        role: true,
         firstName: true,
         lastName: true,
         phone: true,

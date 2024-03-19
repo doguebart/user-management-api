@@ -6,6 +6,11 @@ import { UserRepository } from "../../repositories/user/UserRepository";
 
 const ROLE = process.env.USER_ROLE;
 
+interface AuthenticatedRequest extends Request {
+  userId?: string;
+  userRole?: string;
+}
+
 export class UserController {
   private userRepository: UserRepository;
 
@@ -130,7 +135,7 @@ export class UserController {
       const user = await this.userRepository.getUserById(id);
 
       if (user === null) {
-        return res.status(400).json({ message: "Usuário não encontrado." });
+        return res.status(404).json({ message: "Usuário não encontrado." });
       }
 
       return res.status(200).json(user);
@@ -200,8 +205,10 @@ export class UserController {
     }
   }
 
-  async delete(req: Request, res: Response) {
+  async delete(req: AuthenticatedRequest, res: Response) {
     const { id } = req.params;
+    const userId = req.userId;
+    const userRole = req.userRole;
 
     if (!id) {
       return res
@@ -210,12 +217,33 @@ export class UserController {
     }
 
     try {
+      if (userId !== id && userRole !== ROLE) {
+        return res
+          .status(401)
+          .json({ message: "Você não tem permissão para excluir esta conta." });
+      }
+
+      if (userRole === ROLE) {
+        const userToDelete = await this.userRepository.getUserById(id);
+        if (!userToDelete) {
+          return res.status(404).json({ message: "Usuário não encontrado." });
+        }
+
+        if (userToDelete.role === ROLE) {
+          return res.status(401).json({
+            message:
+              "Os administradores não podem excluir outras contas de administradores.",
+          });
+        }
+      }
+
       await this.userRepository.deleteUser(id);
 
+      res.clearCookie("token");
       return res.status(200).json({ message: "Usuário apagado com sucesso." });
     } catch (error) {
       return res.status(500).json({
-        mesasge: "Algo de errado aconteceu, tente novamente mais tarde.",
+        message: "Algo de errado aconteceu, tente novamente mais tarde.",
       });
     }
   }
