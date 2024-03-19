@@ -21,4 +21,16 @@ export class UserRepository {
       },
     });
   }
+
+  async getUsers() {
+    return await prisma.user.findMany({
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        email: true,
+      },
+    });
+  }
 }

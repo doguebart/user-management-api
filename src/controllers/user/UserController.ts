@@ -89,4 +89,16 @@ export class UserController {
       });
     }
   }
+
+  async getUsers(req: Request, res: Response) {
+    try {
+      const users = await this.userRepository.getUsers();
+
+      return res.status(200).json([users]);
+    } catch (error) {
+      return res.status(500).json({
+        mesasge: "Algo de errado aconteceu, tente novamente mais tarde",
+      });
+    }
+  }
 }

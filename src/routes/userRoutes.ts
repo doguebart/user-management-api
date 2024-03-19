@@ -6,3 +6,4 @@ userRouter.use(express.json());
 const userController = new UserController();
 
 userRouter.post("/register", userController.signUp.bind(userController));
+userRouter.get("/", userController.getUsers.bind(userController));
