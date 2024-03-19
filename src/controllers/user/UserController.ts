@@ -108,6 +108,30 @@ export class UserController {
     }
   }
 
+  async getUserById(req: Request, res: Response) {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "O id do usuário não foi fornecido." });
+    }
+
+    try {
+      const user = await this.userRepository.getUserById(id);
+
+      if (user === null) {
+        return res.status(400).json({ message: "Usuário não encontrado." });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      return res.status(500).json({
+        mesasge: "Algo de errado aconteceu, tente novamente mais tarde.",
+      });
+    }
+  }
+
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const { firstName, lastName, phone, email } = req.body;
