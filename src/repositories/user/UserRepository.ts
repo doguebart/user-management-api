@@ -1,5 +1,9 @@
 import { prisma } from "../../database/db";
-import { ICheckUser, ICreateUserParams, IUpdateUserParams } from "./protocols";
+import {
+  ICheckUser,
+  ICreateUserParams,
+  IUpdateUserParams,
+} from "../../interfaces/user";
 
 export class UserRepository {
   async checkUserByEmail(params: ICheckUser) {

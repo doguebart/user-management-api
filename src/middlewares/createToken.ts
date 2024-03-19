@@ -1,6 +1,8 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import { config } from "dotenv";
 
+config();
 const SECRET = process.env.SECRET || "SECRET";
 
 export const createToken = (

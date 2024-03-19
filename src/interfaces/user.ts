@@ -3,6 +3,11 @@ export interface ICheckUser {
   phone?: string;
 }
 
+export interface IVerifyUserToken {
+  userId: string;
+  userRole: string;
+}
+
 export interface ICreateUserParams {
   id?: string;
   role?: string;
