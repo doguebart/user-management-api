@@ -5,6 +5,7 @@ export interface ICheckUser {
 
 export interface ICreateUserParams {
   id?: string;
+  role?: string;
   firstName: string;
   lastName: string;
   phone: string;

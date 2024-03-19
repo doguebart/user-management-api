@@ -9,3 +9,4 @@ userRouter.post("/register", userController.signUp.bind(userController));
 userRouter.get("/", userController.getUsers.bind(userController));
 userRouter.get("/:id", userController.getUserById.bind(userController));
 userRouter.patch("/:id", userController.update.bind(userController));
+userRouter.delete("/:id", userController.delete.bind(userController));

@@ -13,6 +13,7 @@ export class UserRepository {
   async createUser(params: ICreateUserParams) {
     return await prisma.user.create({
       data: {
+        role: params.role,
         firstName: params.firstName,
         lastName: params.lastName,
         phone: params.phone,
@@ -58,6 +59,12 @@ export class UserRepository {
         firstName: true,
         lastName: true,
       },
+    });
+  }
+
+  async deleteUser(id: string) {
+    return await prisma.user.delete({
+      where: { id },
     });
   }
 }
