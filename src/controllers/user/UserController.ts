@@ -14,6 +14,12 @@ export class UserController {
   async signUp(req: Request, res: Response) {
     const { firstName, lastName, phone, email, password } = req.body;
 
+    if (!firstName || !lastName || !phone || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Preencha todos os campos antes de continuar." });
+    }
+
     if (
       !validator.isLength(firstName, { min: 3 }) ||
       !validator.isLength(lastName, { min: 3 })
@@ -94,10 +100,69 @@ export class UserController {
     try {
       const users = await this.userRepository.getUsers();
 
-      return res.status(200).json([users]);
+      return res.status(200).json(users);
     } catch (error) {
       return res.status(500).json({
-        mesasge: "Algo de errado aconteceu, tente novamente mais tarde",
+        mesasge: "Algo de errado aconteceu, tente novamente mais tarde.",
+      });
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const { firstName, lastName, phone, email } = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "O id do usuário não foi fornecido." });
+    }
+
+    if (!firstName || !lastName) {
+      return res
+        .status(400)
+        .json({ message: "Informações do usuário não atualizadas." });
+    }
+
+    if (
+      !validator.isLength(firstName, { min: 3 }) ||
+      !validator.isLength(lastName, { min: 3 })
+    ) {
+      return res.status(400).json({ message: "Nome ou sobrenome inválidos." });
+    }
+
+    if (email) {
+      return res
+        .status(401)
+        .json({ message: "Não é possível atualizar o e-mail." });
+    }
+
+    if (phone) {
+      return res
+        .status(401)
+        .json({ message: "Não é possível atualizar o número de telefone." });
+    }
+
+    try {
+      const user = await this.userRepository.updateUser(id, {
+        firstName,
+        lastName,
+      });
+
+      if (!user) {
+        return res.status(500).json({
+          message: "Algo de errado aconteceu, tente novamente mais tarde.",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Informações do usuário atualizadas com sucesso.",
+        user,
+      });
+    } catch (error: any) {
+      console.log(error);
+      res.status(500).json({
+        message: "Algo de errado aconteceu, tente novamente mais tarde.",
       });
     }
   }
