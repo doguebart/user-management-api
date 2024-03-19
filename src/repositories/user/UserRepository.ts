@@ -34,6 +34,19 @@ export class UserRepository {
     });
   }
 
+  async getUserById(id: string) {
+    return await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        email: true,
+      },
+    });
+  }
+
   async updateUser(id: string, params: IUpdateUserParams) {
     return await prisma.user.update({
       where: { id },
