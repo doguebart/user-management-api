@@ -110,6 +110,47 @@ export class UserController {
     }
   }
 
+  async signIn(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Preencha todos os campos antes de continuar." });
+    }
+
+    const dbUser = await this.userRepository.checkUserByEmail({ email });
+
+    if (!dbUser) {
+      return res.status(500).json({
+        mesasge: "E-mail ou senha inválidos.",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, dbUser.password);
+
+    if (!passwordMatch) {
+      return res.status(403).json({
+        mesasge: "E-mail ou senha inválidos.",
+      });
+    }
+
+    try {
+      await this.userRepository.signIn({ email });
+
+      createToken(dbUser.id, dbUser.role, res);
+
+      return res.status(201).json({
+        message: "Usuário logado com sucesso.",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        mesasge: "Algo de errado aconteceu, tente novamente mais tarde. 2",
+      });
+    }
+  }
+
   async getUsers(req: Request, res: Response) {
     try {
       const users = await this.userRepository.getUsers();
@@ -146,8 +187,10 @@ export class UserController {
     }
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: AuthenticatedRequest, res: Response) {
     const { id } = req.params;
+    const userId = req.userId;
+    const userRole = req.userRole;
     const { firstName, lastName, phone, email } = req.body;
 
     if (!id) {
@@ -179,6 +222,26 @@ export class UserController {
       return res
         .status(401)
         .json({ message: "Não é possível atualizar o número de telefone." });
+    }
+
+    if (userId !== id && userRole !== ROLE) {
+      return res
+        .status(401)
+        .json({ message: "Você não tem permissão para atualizar esta conta." });
+    }
+
+    if (userRole === ROLE) {
+      const userToUpdate = await this.userRepository.getUserById(id);
+      if (!userToUpdate) {
+        return res.status(404).json({ message: "Usuário não encontrado." });
+      }
+
+      if (userToUpdate.role === ROLE) {
+        return res.status(401).json({
+          message:
+            "Os administradores não podem atualizar outras contas de administradores.",
+        });
+      }
     }
 
     try {
@@ -216,27 +279,27 @@ export class UserController {
         .json({ message: "O id do usuário não foi fornecido." });
     }
 
+    if (userId !== id && userRole !== ROLE) {
+      return res
+        .status(401)
+        .json({ message: "Você não tem permissão para excluir esta conta." });
+    }
+
+    if (userRole === ROLE) {
+      const userToDelete = await this.userRepository.getUserById(id);
+      if (!userToDelete) {
+        return res.status(404).json({ message: "Usuário não encontrado." });
+      }
+
+      if (userToDelete.role === ROLE) {
+        return res.status(401).json({
+          message:
+            "Os administradores não podem excluir outras contas de administradores.",
+        });
+      }
+    }
+
     try {
-      if (userId !== id && userRole !== ROLE) {
-        return res
-          .status(401)
-          .json({ message: "Você não tem permissão para excluir esta conta." });
-      }
-
-      if (userRole === ROLE) {
-        const userToDelete = await this.userRepository.getUserById(id);
-        if (!userToDelete) {
-          return res.status(404).json({ message: "Usuário não encontrado." });
-        }
-
-        if (userToDelete.role === ROLE) {
-          return res.status(401).json({
-            message:
-              "Os administradores não podem excluir outras contas de administradores.",
-          });
-        }
-      }
-
       await this.userRepository.deleteUser(id);
 
       res.clearCookie("token");

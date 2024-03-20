@@ -18,6 +18,10 @@ export interface ICreateUserParams {
   password: string;
 }
 
+export interface ILoginUser {
+  email: string;
+}
+
 export interface IUpdateUserParams {
   firstName?: string;
   lastName?: string;

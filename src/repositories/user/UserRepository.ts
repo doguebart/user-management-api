@@ -2,6 +2,7 @@ import { prisma } from "../../database/db";
 import {
   ICheckUser,
   ICreateUserParams,
+  ILoginUser,
   IUpdateUserParams,
 } from "../../interfaces/user";
 
@@ -25,6 +26,10 @@ export class UserRepository {
         password: params.password,
       },
     });
+  }
+
+  async signIn(params: ILoginUser) {
+    return await prisma.user.findUnique({ where: { email: params.email } });
   }
 
   async getUsers(page: number = 1, pageSize: number = 10) {
