@@ -32,8 +32,6 @@ export const verifyToken = (
     const decodedToken = decoded as IVerifyUserToken;
     req.userId = decodedToken.userId;
     req.userRole = decodedToken.userRole;
-
-    console.log(decoded);
     next();
   });
 };
