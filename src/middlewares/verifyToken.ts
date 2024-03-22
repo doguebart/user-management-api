@@ -26,7 +26,7 @@ export const verifyToken = (
     if (err) {
       console.log(err);
       return res
-        .status(403)
+        .status(401)
         .json({ message: "Falha na autenticação do token." });
     }
     const decodedToken = decoded as IVerifyUserToken;

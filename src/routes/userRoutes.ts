@@ -28,8 +28,12 @@ userRouter.get(
       .json({ user: { id: req.userId, role: req.userRole } });
   }
 );
-userRouter.get("/", userController.getUsers.bind(userController));
-userRouter.get("/:id", userController.getUserById.bind(userController));
+userRouter.get("/", verifyToken, userController.getUsers.bind(userController));
+userRouter.get(
+  "/:id",
+  verifyToken,
+  userController.getUserById.bind(userController)
+);
 userRouter.patch(
   "/:id",
   verifyToken,

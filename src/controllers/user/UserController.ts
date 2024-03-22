@@ -130,7 +130,7 @@ export class UserController {
     const passwordMatch = await bcrypt.compare(password, dbUser.password);
 
     if (!passwordMatch) {
-      return res.status(403).json({
+      return res.status(401).json({
         mesasge: "E-mail ou senha inválidos.",
       });
     }
@@ -154,6 +154,12 @@ export class UserController {
   async getUsers(req: Request, res: Response) {
     try {
       const users = await this.userRepository.getUsers();
+
+      if (users && users.length <= 0) {
+        return res.status(404).json({
+          mesasge: "Nenhum usuário foi encontrado.",
+        });
+      }
 
       return res.status(200).json(users);
     } catch (error) {

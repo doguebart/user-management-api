@@ -1,6 +1,8 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swagger from "./swagger.json";
 import { userRouter } from "./routes/userRoutes";
 
 const app = express();
@@ -9,6 +11,7 @@ app.use(cors());
 
 const port = process.env.PORT || 8000;
 
+app.use("/api-documentation", swaggerUi.serve, swaggerUi.setup(swagger));
 app.use("/user", userRouter);
 
 app.listen(port, () => {
