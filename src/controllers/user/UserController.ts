@@ -122,8 +122,8 @@ export class UserController {
     const dbUser = await this.userRepository.checkUserByEmail({ email });
 
     if (!dbUser) {
-      return res.status(500).json({
-        mesasge: "E-mail ou senha inválidos.",
+      return res.status(401).json({
+        message: "E-mail ou senha inválidos.",
       });
     }
 
@@ -131,7 +131,7 @@ export class UserController {
 
     if (!passwordMatch) {
       return res.status(401).json({
-        mesasge: "E-mail ou senha inválidos.",
+        message: "E-mail ou senha inválidos.",
       });
     }
 
@@ -146,7 +146,7 @@ export class UserController {
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        mesasge: "Algo de errado aconteceu, tente novamente mais tarde. 2",
+        message: "Algo de errado aconteceu, tente novamente mais tarde. 2",
       });
     }
   }
@@ -157,14 +157,14 @@ export class UserController {
 
       if (users && users.length <= 0) {
         return res.status(404).json({
-          mesasge: "Nenhum usuário foi encontrado.",
+          message: "Nenhum usuário foi encontrado.",
         });
       }
 
       return res.status(200).json(users);
     } catch (error) {
       return res.status(500).json({
-        mesasge: "Algo de errado aconteceu, tente novamente mais tarde.",
+        message: "Algo de errado aconteceu, tente novamente mais tarde.",
       });
     }
   }
@@ -188,7 +188,7 @@ export class UserController {
       return res.status(200).json(user);
     } catch (error) {
       return res.status(500).json({
-        mesasge: "Algo de errado aconteceu, tente novamente mais tarde.",
+        message: "Algo de errado aconteceu, tente novamente mais tarde.",
       });
     }
   }
