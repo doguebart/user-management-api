@@ -10,6 +10,6 @@ export const createToken = (
   userRole: string,
   res: Response
 ) => {
-  const token = jwt.sign({ userId, userRole }, SECRET, { expiresIn: "7d" });
-  res.cookie("token", token, { secure: true });
+  const token = jwt.sign({ userId, userRole }, SECRET, { expiresIn: "48h" });
+  res.cookie("token", token);
 };

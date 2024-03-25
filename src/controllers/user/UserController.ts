@@ -297,7 +297,7 @@ export class UserController {
         return res.status(404).json({ message: "Usuário não encontrado." });
       }
 
-      if (userToDelete.role === ROLE) {
+      if (userId !== id && userToDelete.role === ROLE) {
         return res.status(401).json({
           message:
             "Os administradores não podem excluir outras contas de administradores.",
@@ -307,8 +307,6 @@ export class UserController {
 
     try {
       await this.userRepository.deleteUser(id);
-
-      res.clearCookie("token");
       return res.status(200).json({ message: "Usuário apagado com sucesso." });
     } catch (error) {
       return res.status(500).json({
