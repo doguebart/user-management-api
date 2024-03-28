@@ -9,7 +9,11 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:8000/api-documentation",
+      "https://users-api-r89w.onrender.com/api-documentation",
+    ],
     credentials: true,
   })
 );

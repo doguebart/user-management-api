@@ -11,5 +11,5 @@ export const createToken = (
   res: Response
 ) => {
   const token = jwt.sign({ userId, userRole }, SECRET, { expiresIn: "48h" });
-  res.cookie("token", token, { secure: true });
+  res.cookie("token", token, { httpOnly: true, secure: true });
 };
